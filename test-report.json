@@ -1,9 +1,0 @@
-{
-  "failures": [
-    {
-      "test": "tests/unit/test_claude_activity_models.py::TestAnalyzeWithClaudeOutput::test_cached_without_reason_raises_validation_error",
-      "cause": "Replacing `@validator('cache_reason', always=True)` with `@field_validator('cache_reason')` means the validator no longer runs when `cache_reason` is omitted and defaults to None, so `cached=True` without an explicit `cache_reason` passes validation.",
-      "fix": "Move the cached/cache_reason rule to a `@model_validator(mode='after')` (or otherwise restore always-on cross-field validation) so constructing with `cached=True` and no `cache_reason` still raises the same ValidationError."
-    }
-  ]
-}
