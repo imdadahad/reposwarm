@@ -6,7 +6,7 @@ ensuring consistent data structures across the workflow system.
 """
 
 from typing import Optional, Dict, Any, List
-from pydantic import BaseModel, Field, validator, HttpUrl, ConfigDict
+from pydantic import BaseModel, Field, field_validator, HttpUrl, ConfigDict, ValidationInfo
 from datetime import datetime
 
 
@@ -19,14 +19,16 @@ class ConfigOverrides(BaseModel):
     chunk_size: Optional[int] = Field(None, ge=1, le=100, description="Number of repos to process in parallel")
     force_section: Optional[str] = Field(None, description="Force re-execution of specific section (prompt name), or '__all__' to bypass all prompt caches")
     
-    @validator('claude_model')
+    @field_validator('claude_model')
+    @classmethod
     def validate_claude_model(cls, v):
         """Ensure Claude model is valid if provided."""
         if v is not None and (not v or not v.strip()):
             raise ValueError("Claude model must not be empty if provided")
         return v.strip() if v else v
     
-    @validator('force_section')
+    @field_validator('force_section')
+    @classmethod
     def validate_force_section(cls, v):
         """Ensure force section is valid if provided."""
         if v is not None and (not v or not v.strip()):
@@ -42,14 +44,16 @@ class InvestigateSingleRepoRequest(BaseModel):
     force: bool = Field(default=False, description="Force investigation even if cached")
     config_overrides: Optional[ConfigOverrides] = Field(None, description="Configuration overrides")
     
-    @validator('repo_name')
+    @field_validator('repo_name')
+    @classmethod
     def validate_repo_name(cls, v):
         """Ensure repo name is not empty."""
         if not v or not v.strip():
             raise ValueError("Repository name must not be empty")
         return v.strip()
     
-    @validator('repo_url')
+    @field_validator('repo_url')
+    @classmethod
     def validate_repo_url(cls, v):
         """Ensure repo URL is valid."""
         if not v or not v.strip():
@@ -104,7 +108,8 @@ class SaveToHubResult(BaseModel):
     message: str = Field(..., description="Description of the result")
     error: Optional[str] = Field(None, description="Error message if failed")
     
-    @validator('status')
+    @field_validator('status')
+    @classmethod
     def validate_status(cls, v):
         """Ensure status is valid."""
         if v not in ['success', 'failed', 'skipped']:
@@ -119,7 +124,8 @@ class SaveToDynamoResult(BaseModel):
     timestamp: Optional[float] = Field(None, description="Unix timestamp when saved")
     error: Optional[str] = Field(None, description="Error message if failed")
     
-    @validator('status')
+    @field_validator('status')
+    @classmethod
     def validate_status(cls, v):
         """Ensure status is valid."""
         if v not in ['success', 'failed']:
@@ -147,7 +153,8 @@ class InvestigateSingleRepoResult(BaseModel):
     last_investigation_timestamp: Optional[str] = Field(None, description="Timestamp of last investigation")
     message: str = Field(..., description="Human-readable message about the result")
     
-    @validator('status')
+    @field_validator('status')
+    @classmethod
     def validate_status(cls, v):
         """Ensure status is valid."""
         valid_statuses = ['success', 'failed', 'skipped', 'partial']
@@ -170,28 +177,32 @@ class InvestigationResult(BaseModel):
     architecture_hub: Optional[Dict[str, Any]] = Field(None, description="Architecture hub save result")
     metadata_saved: Optional[Dict[str, Any]] = Field(None, description="Metadata save result")
     
-    @validator('status')
+    @field_validator('status')
+    @classmethod
     def validate_status(cls, v):
         """Ensure status is valid."""
         if v not in ['success', 'failed', 'partial']:
             raise ValueError("Status must be 'success', 'failed', or 'partial'")
         return v
     
-    @validator('repo_name')
+    @field_validator('repo_name')
+    @classmethod
     def validate_repo_name(cls, v):
         """Ensure repo name is not empty."""
         if not v or not v.strip():
             raise ValueError("Repository name must not be empty")
         return v.strip()
     
-    @validator('repo_url')
+    @field_validator('repo_url')
+    @classmethod
     def validate_repo_url(cls, v):
         """Ensure repo URL is valid."""
         if not v or not v.strip():
             raise ValueError("Repository URL must not be empty")
         return v.strip()
     
-    @validator('arch_file_content')
+    @field_validator('arch_file_content')
+    @classmethod
     def validate_arch_file_content(cls, v):
         """Ensure architecture file content is not empty."""
         if not v or not v.strip():
@@ -208,7 +219,8 @@ class InvestigateReposRequest(BaseModel):
     chunk_size: Optional[int] = Field(None, ge=1, le=100, description="Number of repos to process in parallel")
     iteration_count: int = Field(default=0, ge=0, description="Current iteration number")
     
-    @validator('claude_model')
+    @field_validator('claude_model')
+    @classmethod
     def validate_claude_model(cls, v):
         """Ensure Claude model is valid if provided."""
         if v is not None and (not v or not v.strip()):
@@ -227,7 +239,8 @@ class InvestigateReposResult(BaseModel):
     repository_update: Dict[str, Any] = Field(..., description="Repository list update results")
     architecture_analysis: Optional[Dict[str, Any]] = Field(None, description="Architecture analysis results")
     
-    @validator('status')
+    @field_validator('status')
+    @classmethod
     def validate_status(cls, v):
         """Ensure status is valid."""
         valid_statuses = ['completed', 'failed', 'partial']
@@ -235,24 +248,27 @@ class InvestigateReposResult(BaseModel):
             raise ValueError(f"Status must be one of {valid_statuses}")
         return v
     
-    @validator('successful')
-    def validate_successful(cls, v, values):
+    @field_validator('successful')
+    @classmethod
+    def validate_successful(cls, v, info: ValidationInfo):
         """Ensure successful count doesn't exceed total."""
-        if 'total_repos' in values and v > values['total_repos']:
+        if 'total_repos' in info.data and v > info.data['total_repos']:
             raise ValueError("Successful count cannot exceed total repositories")
         return v
     
-    @validator('failed')
-    def validate_failed(cls, v, values):
+    @field_validator('failed')
+    @classmethod
+    def validate_failed(cls, v, info: ValidationInfo):
         """Ensure failed count doesn't exceed total."""
-        if 'total_repos' in values and v > values['total_repos']:
+        if 'total_repos' in info.data and v > info.data['total_repos']:
             raise ValueError("Failed count cannot exceed total repositories")
         return v
     
-    @validator('skipped')
-    def validate_skipped(cls, v, values):
+    @field_validator('skipped')
+    @classmethod
+    def validate_skipped(cls, v, info: ValidationInfo):
         """Ensure skipped count doesn't exceed total."""
-        if 'total_repos' in values and v > values['total_repos']:
+        if 'total_repos' in info.data and v > info.data['total_repos']:
             raise ValueError("Skipped count cannot exceed total repositories")
         return v
 
@@ -268,7 +284,8 @@ class WorkflowParams(BaseModel):
     max_retries: int = Field(default=3, ge=1, le=10, description="Maximum number of retries for activities")
     timeout_minutes: int = Field(default=30, ge=5, le=120, description="Overall workflow timeout in minutes")
     
-    @validator('repo_name')
+    @field_validator('repo_name')
+    @classmethod
     def validate_repo_name(cls, v):
         """Ensure repo name is not empty."""
         if not v or not v.strip():
@@ -285,17 +302,19 @@ class AnalysisSummary(BaseModel):
     execution_time_seconds: float = Field(..., ge=0, description="Total execution time in seconds")
     sections_analyzed: List[str] = Field(default_factory=list, description="List of sections analyzed")
     
-    @validator('successful_prompts')
-    def validate_successful_prompts(cls, v, values):
+    @field_validator('successful_prompts')
+    @classmethod
+    def validate_successful_prompts(cls, v, info: ValidationInfo):
         """Ensure successful prompts doesn't exceed total."""
-        if 'total_prompts' in values and v > values['total_prompts']:
+        if 'total_prompts' in info.data and v > info.data['total_prompts']:
             raise ValueError("Successful prompts cannot exceed total prompts")
         return v
     
-    @validator('failed_prompts')
-    def validate_failed_prompts(cls, v, values):
+    @field_validator('failed_prompts')
+    @classmethod
+    def validate_failed_prompts(cls, v, info: ValidationInfo):
         """Ensure failed prompts doesn't exceed total."""
-        if 'total_prompts' in values and v > values['total_prompts']:
+        if 'total_prompts' in info.data and v > info.data['total_prompts']:
             raise ValueError("Failed prompts cannot exceed total prompts")
         return v
 
@@ -314,7 +333,8 @@ class RepositoryAnalysis(BaseModel):
     summary: AnalysisSummary = Field(..., description="Summary of the analysis")
     prompt_versions: Optional[Dict[str, str]] = Field(None, description="Versions of prompts used")
     
-    @validator('analysis_content')
+    @field_validator('analysis_content')
+    @classmethod
     def validate_content(cls, v):
         """Ensure analysis content is not empty."""
         if not v or not v.strip():
@@ -334,7 +354,8 @@ class WorkflowResult(BaseModel):
     execution_time_seconds: float = Field(..., ge=0, description="Total workflow execution time")
     metadata_saved: bool = Field(default=False, description="Whether metadata was saved to cache")
     
-    @validator('status')
+    @field_validator('status')
+    @classmethod
     def validate_status(cls, v):
         """Ensure status is valid."""
         valid_statuses = ['success', 'failed', 'skipped', 'partial']
@@ -342,9 +363,10 @@ class WorkflowResult(BaseModel):
             raise ValueError(f"Status must be one of {valid_statuses}")
         return v
     
-    @validator('error')
-    def validate_error(cls, v, values):
+    @field_validator('error')
+    @classmethod
+    def validate_error(cls, v, info: ValidationInfo):
         """Ensure error is present when status is failed."""
-        if values.get('status') == 'failed' and not v:
+        if info.data.get('status') == 'failed' and not v:
             raise ValueError("Error message must be provided when status is 'failed'")
         return v

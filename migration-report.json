@@ -1,0 +1,94 @@
+{
+  "changed": [
+    {"file": "src/models/activities.py", "line": 19, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/activities.py", "line": 26, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/activities.py", "line": 53, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/activities.py", "line": 60, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/activities.py", "line": 70, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/activities.py", "line": 84, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/activities.py", "line": 98, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/activities.py", "line": 115, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/activities.py", "line": 132, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/activities.py", "line": 139, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/activities.py", "line": 146, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/activities.py", "line": 153, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/activities.py", "line": 173, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/activities.py", "line": 187, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/activities.py", "line": 206, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/activities.py", "line": 213, "note": "always=True removed; validate_default=True on Field; cross-field via ValidationInfo"},
+    {"file": "src/models/cache.py", "line": 20, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/cache.py", "line": 40, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/cache.py", "line": 56, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/cache.py", "line": 63, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/investigation.py", "line": 18, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/investigation.py", "line": 38, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/investigation.py", "line": 45, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/investigation.py", "line": 52, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/investigation.py", "line": 68, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/investigation.py", "line": 82, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/investigation.py", "line": 89, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/workflows.py", "line": 22, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/workflows.py", "line": 29, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/workflows.py", "line": 45, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/workflows.py", "line": 52, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/workflows.py", "line": 107, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/workflows.py", "line": 122, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/workflows.py", "line": 150, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/workflows.py", "line": 173, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/workflows.py", "line": 180, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/workflows.py", "line": 187, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/workflows.py", "line": 194, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/workflows.py", "line": 211, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/workflows.py", "line": 230, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/workflows.py", "line": 238, "note": "values dict -> ValidationInfo.info.data"},
+    {"file": "src/models/workflows.py", "line": 245, "note": "values dict -> ValidationInfo.info.data"},
+    {"file": "src/models/workflows.py", "line": 252, "note": "values dict -> ValidationInfo.info.data"},
+    {"file": "src/models/workflows.py", "line": 271, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/workflows.py", "line": 288, "note": "values dict -> ValidationInfo.info.data"},
+    {"file": "src/models/workflows.py", "line": 295, "note": "values dict -> ValidationInfo.info.data"},
+    {"file": "src/models/workflows.py", "line": 317, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/workflows.py", "line": 337, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/models/workflows.py", "line": 345, "note": "values dict -> ValidationInfo.info.data"},
+    {"file": "src/utils/storage_keys.py", "line": 39, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/utils/storage_keys.py", "line": 44, "note": "@validator -> @field_validator with @classmethod"},
+    {"file": "src/utils/storage_keys.py", "line": 126, "note": "@validator -> @field_validator with @classmethod"}
+  ],
+  "skipped": [],
+  "guesses": [
+    {
+      "file": "src/models/activities.py",
+      "line": 213,
+      "assumed": "always=True approximated with Field(validate_default=True) plus @field_validator('cache_reason') reading info.data['cached']; model_validator(mode='after') would be an alternative if field order breaks the cross-field check"
+    },
+    {
+      "file": "src/models/workflows.py",
+      "line": 238,
+      "assumed": "Pydantic v1 values dict replaced with ValidationInfo.data; relies on total_repos appearing before successful in model field order"
+    },
+    {
+      "file": "src/models/workflows.py",
+      "line": 245,
+      "assumed": "Same ValidationInfo.data pattern for failed vs total_repos"
+    },
+    {
+      "file": "src/models/workflows.py",
+      "line": 252,
+      "assumed": "Same ValidationInfo.data pattern for skipped vs total_repos"
+    },
+    {
+      "file": "src/models/workflows.py",
+      "line": 288,
+      "assumed": "Same ValidationInfo.data pattern for successful_prompts vs total_prompts"
+    },
+    {
+      "file": "src/models/workflows.py",
+      "line": 295,
+      "assumed": "Same ValidationInfo.data pattern for failed_prompts vs total_prompts"
+    },
+    {
+      "file": "src/models/workflows.py",
+      "line": 345,
+      "assumed": "error/status cross-field check uses info.data.get('status'); status is defined before error on the model"
+    }
+  ]
+}
