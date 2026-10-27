@@ -215,7 +215,7 @@ class AnalyzeWithClaudeOutput(BaseModel):
     context: PromptContextDict = Field(..., description="Updated context dictionary with result reference")
     result_length: int = Field(..., ge=0, description="Length of the analysis result in characters")
     cached: bool = Field(..., description="Whether the result was served from cache")
-    cache_reason: Optional[str] = Field(None, description="Reason for cache hit/miss if applicable")
+    cache_reason: Optional[str] = Field(None, description="Reason for cache hit/miss if applicable", validate_default=True)
     
     @field_validator('status')
     @classmethod

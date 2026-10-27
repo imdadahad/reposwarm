@@ -15,7 +15,7 @@
     {"file": "src/models/activities.py", "line": 173, "note": "@validator -> @field_validator('claude_model') + @classmethod"},
     {"file": "src/models/activities.py", "line": 187, "note": "@validator -> @field_validator('latest_commit') + @classmethod"},
     {"file": "src/models/activities.py", "line": 206, "note": "@validator -> @field_validator('status') + @classmethod"},
-    {"file": "src/models/activities.py", "line": 213, "note": "@validator(cache_reason, always=True) -> @field_validator('cache_reason') + ValidationInfo"},
+    {"file": "src/models/activities.py", "line": 213, "note": "@validator(cache_reason, always=True) -> @field_validator('cache_reason') + ValidationInfo; Field(validate_default=True) replaces always=True"},
     {"file": "src/models/cache.py", "line": 20, "note": "@validator -> @field_validator('reference_key') + @classmethod"},
     {"file": "src/models/cache.py", "line": 40, "note": "@validator -> @field_validator('reason') + @classmethod"},
     {"file": "src/models/cache.py", "line": 56, "note": "@validator -> @field_validator('reason') + @classmethod"},
@@ -58,7 +58,7 @@
     {
       "file": "src/models/activities.py",
       "line": 213,
-      "assumed": "always=True removed; cross-field check on cached uses ValidationInfo.data.get('cached') (field order: cached before cache_reason)"
+      "assumed": "always=True replaced with validate_default=True on cache_reason Field so validator runs when cache_reason is omitted; cross-field check uses ValidationInfo.data.get('cached')"
     },
     {
       "file": "src/models/workflows.py",
