@@ -7,7 +7,7 @@ consistently across both DynamoDB and file-based storage systems.
 
 import re
 from typing import Optional, Tuple
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 
 
 def _sanitize_for_filesystem(name: str) -> str:
@@ -36,12 +36,14 @@ class PromptCacheKey(BaseModel):
     commit_sha: str = Field(..., description="Git commit SHA")
     prompt_version: str = Field(default="1", description="Prompt version")
     
-    @validator('repo_name', 'step_name')
+    @field_validator('repo_name', 'step_name')
+    @classmethod
     def validate_no_special_chars(cls, v):
         """Accept any input — sanitization happens in to_file_safe_key()."""
         return v
     
-    @validator('commit_sha')
+    @field_validator('commit_sha')
+    @classmethod
     def validate_commit_sha(cls, v):
         """Ensure commit SHA is valid."""
         if not v or len(v) < 6:  # Allow shorter SHAs for testing (min 6 chars)
@@ -123,7 +125,8 @@ class InvestigationMetadataKey(BaseModel):
     repo_name: str = Field(..., description="Repository name")
     analysis_type: str = Field(default="investigation", description="Type of analysis")
     
-    @validator('repo_name')
+    @field_validator('repo_name')
+    @classmethod
     def validate_repo_name(cls, v):
         """Ensure repo name is valid."""
         if not v:
