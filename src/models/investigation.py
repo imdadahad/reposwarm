@@ -7,7 +7,7 @@ and metadata.
 """
 
 from typing import Dict, Optional, Any
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 
 
 class PromptMetadata(BaseModel):
@@ -15,7 +15,8 @@ class PromptMetadata(BaseModel):
     count: int = Field(..., ge=0, description="Number of prompts used")
     versions: Dict[str, str] = Field(default_factory=dict, description="Mapping of prompt names to versions")
     
-    @validator('versions')
+    @field_validator('versions')
+    @classmethod
     def validate_versions(cls, v):
         """Ensure all version values are non-empty strings."""
         for prompt_name, version in v.items():
@@ -35,21 +36,24 @@ class InvestigationMetadata(BaseModel):
     prompt_metadata: Optional[PromptMetadata] = Field(None, description="Metadata about prompts used")
     analysis_data: Optional[Dict[str, Any]] = Field(default_factory=dict, description="Additional analysis data")
     
-    @validator('latest_commit')
+    @field_validator('latest_commit')
+    @classmethod
     def validate_commit_sha(cls, v):
         """Ensure commit SHA is a non-empty string if provided."""
         if v is not None and (not v or not v.strip()):
             raise ValueError("Commit SHA must be a non-empty string if provided")
         return v.strip() if v else v
     
-    @validator('branch_name')
+    @field_validator('branch_name')
+    @classmethod
     def validate_branch_name(cls, v):
         """Ensure branch name is a non-empty string."""
         if not v or not v.strip():
             raise ValueError("Branch name must be a non-empty string")
         return v.strip()
     
-    @validator('analysis_timestamp')
+    @field_validator('analysis_timestamp')
+    @classmethod
     def validate_timestamp(cls, v):
         """Ensure timestamp is non-negative (allow zero for edge cases)."""
         if v < 0:
@@ -65,7 +69,8 @@ class InvestigationDecision(BaseModel):
     branch_name: Optional[str] = Field(None, description="Branch name")
     last_investigation: Optional[Any] = Field(None, description="Previous investigation metadata")
     
-    @validator('reason')
+    @field_validator('reason')
+    @classmethod
     def validate_reason(cls, v):
         """Ensure reason is a non-empty string."""
         if not v or not v.strip():
@@ -79,14 +84,16 @@ class RepositoryState(BaseModel):
     branch_name: str = Field(..., description="Current branch name")
     has_uncommitted_changes: bool = Field(..., description="Whether there are uncommitted changes")
     
-    @validator('commit_sha')
+    @field_validator('commit_sha')
+    @classmethod
     def validate_commit_sha(cls, v):
         """Ensure commit SHA is a non-empty string."""
         if not v or not v.strip():
             raise ValueError("Commit SHA must be a non-empty string")
         return v.strip()
     
-    @validator('branch_name')
+    @field_validator('branch_name')
+    @classmethod
     def validate_branch_name(cls, v):
         """Ensure branch name is a non-empty string."""
         if not v or not v.strip():

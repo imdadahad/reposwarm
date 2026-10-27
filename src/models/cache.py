@@ -6,7 +6,7 @@ and prompt outputs at various levels.
 """
 
 from typing import Optional, Dict, Any
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 
 
 class AnalysisResult(BaseModel):
@@ -17,7 +17,8 @@ class AnalysisResult(BaseModel):
     timestamp: float = Field(..., description="Unix timestamp when result was saved")
     ttl_minutes: int = Field(default=60, ge=1, description="Time-to-live in minutes")
     
-    @validator('reference_key')
+    @field_validator('reference_key')
+    @classmethod
     def validate_reference_key(cls, v):
         """Ensure reference key follows expected format."""
         if not v or not v.strip():
@@ -37,7 +38,8 @@ class CacheCheckResult(BaseModel):
     branch_name: Optional[str] = Field(None, description="Current branch name")
     last_investigation: Optional[Dict[str, Any]] = Field(None, description="Previous investigation metadata")
     
-    @validator('reason')
+    @field_validator('reason')
+    @classmethod
     def validate_reason(cls, v):
         """Ensure reason is a non-empty string."""
         if not v or not v.strip():
@@ -53,14 +55,16 @@ class PromptCacheResult(BaseModel):
     reason: str = Field(..., description="Explanation of the decision")
     version: str = Field(default="1", description="Version of the cached result")
     
-    @validator('reason')
+    @field_validator('reason')
+    @classmethod
     def validate_reason(cls, v):
         """Ensure reason is a non-empty string."""
         if not v or not v.strip():
             raise ValueError("Reason must be a non-empty string")
         return v.strip()
     
-    @validator('version')
+    @field_validator('version')
+    @classmethod
     def validate_version(cls, v):
         """Ensure version is a non-empty string."""
         if not v or not v.strip():
